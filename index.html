@@ -11,22 +11,28 @@
   <style>
     /* ===== Global / Background ===== */
     :root{
-      --accent:#2b4f81;         /* headings accent */
-      --muted:#6b7280;          /* muted text */
+      --accent:#2b4f81;
+      --muted:#6b7280;
       --chip-bg:rgba(240,240,240,0.9);
       --shadow:0 8px 24px rgba(0,0,0,.08);
+      --shadow-light:0 4px 12px rgba(0,0,0,.06);
     }
 
-    html,body{height:100%}
+    * {
+      box-sizing: border-box;
+    }
+
+    html,body{height:100%; margin:0; padding:0;}
     body{
-      margin:0;
       font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       color:#000;
       background: linear-gradient(135deg, #e6f0fa 0%, #f4e9fc 100%);
       position:relative; 
       overflow-x:hidden;
+      line-height: 1.6;
     }
-    /* top & bottom soft curves */
+
+    /* Background curves - responsive */
     body::before, body::after{
       content:"";
       position:absolute; left:0; width:100%;
@@ -43,131 +49,768 @@
 
     /* ===== Layout ===== */
     .wrap{
-      max-width:1180px; margin:40px auto; padding:0 16px;
-      position:relative; z-index:1;
+      max-width:1200px; 
+      margin:20px auto; 
+      padding:0 16px;
+      position:relative; 
+      z-index:1;
     }
+
     .container{
-      display:flex; gap:0; border-radius:20px; overflow:hidden;
-      box-shadow:var(--shadow); background:#fff; /* so curves don't show behind main card edges */
+      display:flex; 
+      flex-direction: row;
+      gap:0; 
+      border-radius:20px; 
+      overflow:hidden;
+      box-shadow:var(--shadow); 
+      background:#fff;
+      min-height: 100vh;
     }
 
-    /* Left Sidebar */
+    /* ===== LEFT SIDEBAR ===== */
     .left{
-        width: 30%;
-        background: #e6f0fa;   /* Light blue background */
-        color: #000;           /* Black text for readability */
-        padding: 30px 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        }
-        /* Profile photo */
-    .profile-pic{
-        width:150px; height:150px; border-radius:50%;
-        background:#c9c9c9 url('niyomi-resume-closeup.jpg') center/cover no-repeat;
-        border:4px solid #fff; box-shadow: var(--shadow);
-        margin-bottom:16px;
-        }
-
-        /* About */
-    .about{ text-align:center; width:100%; }
-    .about h1{ font-size:1.6rem; margin:px 0 2px; }
-    .about .role{ color:#111; font-weight:600; margin-bottom:5px; }
-    .about .info{ margin:5px 0; color:#111; font-size:0.95rem; }
-    .about .info i{ margin-right:5px; color:#111; }
-
-      /* Social */
-    .social { margin: 20px 0; }
-    .social a {
-    margin: 0 10px;
-    font-size: 1.4rem;
-    color: #333;
-    transition: color 0.3s ease, transform 0.2s ease;
+      width: 35%;
+      min-width: 280px;
+      background: #e6f0fa;
+      color: #000;
+      padding: 40px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
-    .social a:hover { color: #4a90e2; transform: translateY(-2px); }
+
+    /* Profile photo - responsive sizing */
+    .profile-pic{
+      width: clamp(120px, 15vw, 150px);
+      height: clamp(120px, 15vw, 150px);
+      border-radius:50%;
+      background:#c9c9c9 url('niyomi-resume-closeup.jpg') center/cover no-repeat;
+      border:4px solid #fff; 
+      box-shadow: var(--shadow);
+      margin-bottom:20px;
+      flex-shrink: 0;
+    }
+
+    /* About section */
+    .about{ 
+      text-align:center; 
+      width:100%; 
+      margin-bottom: 24px;
+    }
+    .about h1{ 
+      font-size: clamp(1.3rem, 4vw, 1.6rem);
+      margin:0 0 8px; 
+      font-weight: 700;
+    }
+    .about .role{ 
+      color:#111; 
+      font-weight:600; 
+      margin-bottom:16px;
+      font-size: clamp(0.9rem, 2.5vw, 1rem);
+    }
+    .about .info{ 
+      margin:8px 0; 
+      color:#111; 
+      font-size: clamp(0.85rem, 2vw, 0.95rem);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .about .info i{ 
+      color:#111; 
+      width: 16px;
+      text-align: center;
+    }
+
+    /* Social Links */
+    .social { 
+      margin: 24px 0; 
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .social a {
+      font-size: clamp(1.2rem, 3vw, 1.4rem);
+      color: #333;
+      transition: all 0.3s ease;
+      padding: 8px;
+      border-radius: 8px;
+    }
+    .social a:hover { 
+      color: #4a90e2; 
+      transform: translateY(-2px);
+      background: rgba(74, 144, 226, 0.1);
+    }
 
     .separator {
-        width: 56px;
-        height: 3px;
-        background: #4a90e2;      /* modern accent */
-        border-radius: 2px;
-        margin: 8px auto 15px auto;
+      width: 56px;
+      height: 3px;
+      background: #4a90e2;
+      border-radius: 2px;
+      margin: 12px auto 20px auto;
+      flex-shrink: 0;
     }
 
-   /* Technical Skills (no cards; clean inline with icons) */
+    /* Technical Skills */
+    .skills h2 {
+      font-size: clamp(1.1rem, 3vw, 1.3rem);
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
     .skills-list {
-        list-style: none;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 12px 20px;
-        padding: 0;
-        }
-    .skills-list li {
-        display: flex;
-        align-items: center;
-        font-size: 0.95rem;
-        font-weight: 500;
-        color: #222;
-        }
-    .skills-list img {
-        width: 22px;
-        height: 22px;
-        margin-right: 10px;
-        }
-
-    /* Right content */
-    .right{ flex:1; background:#fff; padding:34px 34px; }
-    .section{ margin-bottom:34px; animation:fadeUp .7s ease both; }
-    .section h2{ margin:0 0 14px; color:var(--accent); border-left:6px solid var(--accent); padding-left:10px; }
-    .section p{ line-height:1.6; color:#111; }
-
-    /* Timeline (no big circles) */
-    .timeline{ position:relative; padding-left:22px; }
-    .timeline::before{
-      content:""; position:absolute; left:8px; top:0; bottom:0; width:3px; background:#cfd8dc;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      width: 100%;
     }
-    .t-item{ position:relative; margin:0 0 22px 0; padding-left:18px; }
-    .t-meta{ margin-bottom:6px; }
+
+    .skills-list li {
+      display: flex;
+      align-items: center;
+      font-size: clamp(0.8rem, 2vw, 0.95rem);
+      font-weight: 500;
+      color: #222;
+      padding: 8px;
+      border-radius: 8px;
+      transition: background 0.3s ease;
+    }
+
+    .skills-list li:hover {
+      background: rgba(74, 144, 226, 0.08);
+    }
+
+    .skills-list img {
+      width: clamp(18px, 3vw, 22px);
+      height: clamp(18px, 3vw, 22px);
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+
+    /* ===== RIGHT CONTENT ===== */
+    .right{ 
+      flex:1; 
+      background:#fff; 
+      padding: clamp(24px, 4vw, 40px);
+      overflow-y: auto;
+    }
+
+    .section{ 
+      margin-bottom: clamp(28px, 5vw, 40px);
+      animation:fadeUp .7s ease both; 
+    }
+
+    .section h2{ 
+      margin:0 0 16px; 
+      color:var(--accent); 
+      border-left:6px solid var(--accent); 
+      padding-left:12px;
+      font-size: clamp(1.2rem, 4vw, 1.4rem);
+    }
+
+    .section p{ 
+      line-height:1.6; 
+      color:#111; 
+      font-size: clamp(0.9rem, 2.2vw, 1rem);
+      text-align: justify;
+    }
+
+    /* Timeline */
+    .timeline{ 
+      position:relative; 
+      padding-left: clamp(20px, 3vw, 24px);
+    }
+    .timeline::before{
+      content:""; 
+      position:absolute; 
+      left: clamp(8px, 1.5vw, 10px); 
+      top:0; bottom:0; 
+      width:3px; 
+      background:#cfd8dc;
+    }
+
+    .t-item{ 
+      position:relative; 
+      margin:0 0 28px 0; 
+      padding-left: clamp(16px, 3vw, 20px);
+    }
+
+    .t-meta{ 
+      margin-bottom:8px; 
+    }
+
     .year-badge{
-      display:inline-block; background:var(--chip-bg);
-      padding:5px 12px; border-radius:22px; font-weight:600; font-size:.82rem; 
+      display:inline-block; 
+      background:var(--chip-bg);
+      padding: clamp(4px, 1vw, 6px) clamp(10px, 2vw, 14px); 
+      border-radius:22px; 
+      font-weight:600; 
+      font-size: clamp(0.75rem, 1.8vw, 0.85rem);
       border:1px solid #e6e6e6;
     }
-    .t-role{ margin:2px 0 0; font-weight:700; }
-    .t-desc-skills{margin:2px 0 0; font-weight:300;}
-    .t-desc{ margin:6px 0 0; color:#222; text-align: justify; }
 
-    h2 {
-  font-size: 1.4rem;
-  margin-bottom: 8px;
-}
+    .t-role{ 
+      margin:4px 0 0; 
+      font-weight:700;
+      font-size: clamp(1rem, 2.5vw, 1.1rem);
+      line-height: 1.4;
+    }
 
-.btn {
-  display: inline-block;
-  margin-top: 1rem;
-  padding: 0.6rem 1.2rem;
-  background: #fbbf24;
-  color: #111;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: bold;
-  transition: background 0.3s;
-}
+    .t-desc-skills{
+      margin:4px 0 8px; 
+      font-weight:500;
+      color: var(--accent);
+      font-size: clamp(0.8rem, 2vw, 0.9rem);
+    }
 
-.btn:hover {
-  background: #f59e0b;
-}
+    .t-desc{ 
+      margin:8px 0 0; 
+      color:#222;
+    }
 
-    /* Small fade animation */
+    .t-desc p {
+      margin: 12px 0;
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 12px 24px;
+      background: #fbbf24;
+      color: #111;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      font-size: clamp(0.9rem, 2vw, 1rem);
+    }
+
+    .btn:hover {
+      background: #f59e0b;
+      transform: translateY(-1px);
+    }
+
+    /* Animation */
     @keyframes fadeUp{
-      from{ opacity:0; transform: translateY(16px); }
+      from{ opacity:0; transform: translateY(20px); }
       to{ opacity:1; transform: translateY(0); }
     }
 
-    /* ===== Responsive ===== */
-    @media (max-width: 900px){
-      .container{ flex-direction:column; }
-      .left{ flex-basis:auto; }
+    /* ===== RESPONSIVE BREAKPOINTS ===== */
+    
+    /* Large tablets and small laptops */
+    @media (max-width: 1024px) {
+      .left {
+        width: 38%;
+        min-width: 260px;
+        padding: 32px 20px;
+      }
+      
+      .container {
+        margin: 16px 0;
+      }
+    }
+
+    /* Tablets */
+    @media (max-width: 900px) {
+      .container { 
+        flex-direction: column;
+        margin: 12px 0;
+        border-radius: 16px;
+      }
+      
+      .left { 
+        width: 100%;
+        min-width: auto;
+        padding: 32px 24px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: flex-start;
+        text-align: left;
+      }
+
+      .profile-pic {
+        order: 1;
+        margin-right: 24px;
+        margin-bottom: 0;
+      }
+
+      .about {
+        order: 2;
+        flex: 1;
+        text-align: left;
+        margin-bottom: 0;
+      }
+
+      .about .info {
+        justify-content: flex-start;
+      }
+
+      .social {
+        order: 3;
+        margin: 16px 0 0 0;
+        width: 100%;
+      }
+
+      .skills {
+        order: 4;
+        width: 100%;
+        margin-top: 24px;
+      }
+
+      .separator {
+        margin: 8px 0 16px 0;
+      }
+
+      .skills h2 {
+        text-align: left;
+      }
+
+      .skills-list {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 8px;
+      }
+    }
+
+    /* Small tablets */
+    @media (max-width: 768px) {
+      .wrap {
+        margin: 8px auto;
+        padding: 0 12px;
+      }
+
+      .left {
+        padding: 24px 20px;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .profile-pic {
+        margin-right: 0;
+        margin-bottom: 16px;
+      }
+
+      .about {
+        text-align: center;
+        margin-bottom: 16px;
+      }
+
+      .about .info {
+        justify-content: center;
+      }
+
+      .social {
+        order: 3;
+        margin: 16px 0;
+      }
+
+      .skills {
+        margin-top: 20px;
+      }
+
+      .skills h2 {
+        text-align: center;
+      }
+
+      .skills-list {
+        grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+      }
+
+      .right {
+        padding: clamp(20px, 4vw, 32px);
+      }
+    }
+
+    /* Mobile phones */
+    @media (max-width: 480px) {
+      .wrap {
+        margin: 2px auto;
+        padding: 0 4px;
+      }
+
+      .container {
+        border-radius: 8px;
+        margin: 4px 0;
+      }
+
+      .left {
+        padding: 16px 12px;
+        min-width: auto;
+      }
+
+      .profile-pic {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 12px;
+      }
+
+      .about h1 {
+        font-size: 1.1rem;
+        margin-bottom: 4px;
+      }
+
+      .about .role {
+        font-size: 0.8rem;
+        margin-bottom: 8px;
+        line-height: 1.2;
+      }
+
+      .about .info {
+        font-size: 0.75rem;
+        margin: 4px 0;
+      }
+
+      .about .info i {
+        width: 12px;
+        font-size: 0.7rem;
+      }
+
+      .separator {
+        width: 40px;
+        height: 2px;
+        margin: 6px auto 10px auto;
+      }
+
+      .social {
+        gap: 12px;
+        margin: 12px 0;
+      }
+
+      .social a {
+        font-size: 1rem;
+        padding: 4px;
+      }
+
+      .skills h2 {
+        font-size: 1rem;
+        margin-bottom: 6px;
+      }
+
+      .skills-list {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 4px 8px;
+      }
+
+      .skills-list li {
+        padding: 4px 6px;
+        font-size: 0.7rem;
+        border-radius: 4px;
+      }
+
+      .skills-list img {
+        width: 14px;
+        height: 14px;
+        margin-right: 4px;
+      }
+
+      .right {
+        padding: 12px 10px;
+      }
+
+      .section {
+        margin-bottom: 18px;
+      }
+
+      .section h2 {
+        font-size: 1rem;
+        margin-bottom: 8px;
+        padding-left: 6px;
+        border-left-width: 3px;
+      }
+
+      .section p {
+        font-size: 0.8rem;
+        line-height: 1.4;
+        margin: 8px 0;
+      }
+
+      .timeline {
+        padding-left: 14px;
+      }
+
+      .timeline::before {
+        left: 5px;
+        width: 2px;
+      }
+
+      .t-item {
+        padding-left: 12px;
+        margin-bottom: 16px;
+      }
+
+      .year-badge {
+        padding: 2px 6px;
+        font-size: 0.65rem;
+        border-radius: 12px;
+      }
+
+      .t-role {
+        font-size: 0.85rem;
+        line-height: 1.2;
+        margin: 2px 0;
+      }
+
+      .t-desc-skills {
+        font-size: 0.7rem;
+        margin: 2px 0 4px;
+        line-height: 1.2;
+      }
+
+      .t-desc {
+        font-size: 0.75rem;
+        line-height: 1.3;
+      }
+
+      .t-desc p {
+        margin: 6px 0;
+        font-size: 0.75rem;
+      }
+    }
+
+    /* Very small devices */
+    @media (max-width: 360px) {
+      .wrap {
+        padding: 0 2px;
+        margin: 1px auto;
+      }
+
+      .container {
+        border-radius: 6px;
+      }
+
+      .left {
+        padding: 12px 8px;
+      }
+
+      .profile-pic {
+        width: 70px;
+        height: 70px;
+        margin-bottom: 8px;
+      }
+
+      .about h1 {
+        font-size: 1rem;
+      }
+
+      .about .role {
+        font-size: 0.75rem;
+      }
+
+      .about .info {
+        font-size: 0.7rem;
+        margin: 3px 0;
+      }
+
+      .separator {
+        width: 30px;
+        margin: 4px auto 8px auto;
+      }
+
+      .social {
+        gap: 8px;
+        margin: 8px 0;
+      }
+
+      .social a {
+        font-size: 0.9rem;
+        padding: 3px;
+      }
+
+      .skills h2 {
+        font-size: 0.9rem;
+      }
+
+      .skills-list {
+        grid-template-columns: 1fr 1fr;
+        gap: 2px 4px;
+      }
+
+      .skills-list li {
+        padding: 3px 4px;
+        font-size: 0.65rem;
+      }
+
+      .skills-list img {
+        width: 12px;
+        height: 12px;
+        margin-right: 3px;
+      }
+
+      .right {
+        padding: 8px 6px;
+      }
+
+      .section {
+        margin-bottom: 14px;
+      }
+
+      .section h2 {
+        font-size: 0.9rem;
+        margin-bottom: 6px;
+        padding-left: 4px;
+        border-left-width: 2px;
+      }
+
+      .section p {
+        font-size: 0.7rem;
+        line-height: 1.3;
+        margin: 6px 0;
+      }
+
+      .timeline {
+        padding-left: 10px;
+      }
+
+      .timeline::before {
+        left: 3px;
+        width: 1px;
+      }
+
+      .t-item {
+        padding-left: 8px;
+        margin-bottom: 12px;
+      }
+
+      .year-badge {
+        padding: 1px 4px;
+        font-size: 0.6rem;
+        border-radius: 8px;
+      }
+
+      .t-role {
+        font-size: 0.75rem;
+        line-height: 1.1;
+        margin: 1px 0;
+      }
+
+      .t-desc-skills {
+        font-size: 0.65rem;
+        margin: 1px 0 3px;
+        line-height: 1.1;
+      }
+
+      .t-desc {
+        font-size: 0.7rem;
+        line-height: 1.2;
+      }
+
+      .t-desc p {
+        margin: 4px 0;
+        font-size: 0.7rem;
+      }
+    }
+
+    /* Large screens optimization */
+    @media (min-width: 1400px) {
+      .wrap {
+        max-width: 1400px;
+      }
+      
+      .left {
+        width: 32%;
+      }
+    }
+
+    /* Print styles */
+    @media print {
+      body {
+        background: white;
+      }
+      
+      body::before, body::after {
+        display: none;
+      }
+      
+      .container {
+        box-shadow: none;
+        border: 1px solid #ddd;
+      }
+      
+      .wrap {
+        margin: 0;
+        padding: 0;
+      }
+      
+      .section {
+        break-inside: avoid;
+      }
+    }
+
+    /* Landscape orientation on small devices */
+    @media (max-height: 500px) and (orientation: landscape) {
+      .left {
+        flex-direction: row;
+        flex-wrap: wrap;
+        padding: 16px;
+        align-items: flex-start;
+      }
+
+      .profile-pic {
+        width: 80px;
+        height: 80px;
+        margin-right: 16px;
+        margin-bottom: 0;
+      }
+
+      .about {
+        flex: 1;
+        text-align: left;
+        margin-bottom: 0;
+      }
+
+      .about .info {
+        justify-content: flex-start;
+      }
+
+      .social {
+        order: 3;
+        margin: 8px 0;
+      }
+
+      .skills {
+        order: 4;
+        width: 100%;
+        margin-top: 12px;
+      }
+    }
+
+    /* Accessibility improvements */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* High contrast mode support */
+    @media (prefers-contrast: high) {
+      :root {
+        --accent: #1a365d;
+      }
+      
+      .left {
+        background: #f0f9ff;
+        border: 2px solid #1a365d;
+      }
+      
+      .skills-list li:hover {
+        background: #e0f2fe;
+      }
+    }
+
+    /* Focus styles for keyboard navigation */
+    .social a:focus,
+    .btn:focus {
+      outline: 2px solid #4a90e2;
+      outline-offset: 2px;
     }
   </style>
 </head>
@@ -175,48 +818,58 @@
   <main class="wrap" id="resume">
     <section class="container">
 
-      <!-- ================= LEFT ================= -->
+      <!-- ================= LEFT SIDEBAR ================= -->
       <aside class="left">
         <div class="profile-pic" aria-label="Profile photo"></div>
 
         <!-- About Me -->
-      <section class="about" data-aos="fade-up">
-        <h2>About Me</h2>
-        <div class="separator"></div>
-        <p> Niyomi Rabdu</p>
-        <p> SDET | QA Automation Engineer</p>
-        <p><i class="fas fa-briefcase"></i> 5+ Years Experience</p>
-        <p><i class="fas fa-phone"></i>  8460884984</p>
-      </section>
+        <section class="about">
+          <h1>Niyomi Rabdu</h1>
+          <div class="role">SDET | QA Automation Engineer</div>
+          <div class="separator"></div>
+          <div class="info">
+            <i class="fas fa-briefcase"></i>
+            <span>5+ Years Experience</span>
+          </div>
+          <div class="info">
+            <i class="fas fa-phone"></i>
+            <span>8460884984</span>
+          </div>
+        </section>
 
-      <!-- Social Links -->
-      <section class="social" data-aos="fade-up">
-        <a href="https://www.linkedin.com/in/niyomi-rabdu/" target="_blank"><i class="fab fa-linkedin"></i></a>
-        <a href="mailto:niyomirabdu93@gmail.com"><i class="fa-solid fa-envelope"></i></a>
-        <a href="https://github.com/niyomi" target="_blank"><i class="fab fa-github"></i></a>
-      </section>
+        <!-- Social Links -->
+        <section class="social">
+          <a href="https://www.linkedin.com/in/niyomi-rabdu/" target="_blank" aria-label="LinkedIn Profile">
+            <i class="fab fa-linkedin"></i>
+          </a>
+          <a href="mailto:niyomirabdu93@gmail.com" aria-label="Email">
+            <i class="fa-solid fa-envelope"></i>
+          </a>
+          <a href="https://github.com/niyomi" target="_blank" aria-label="GitHub Profile">
+            <i class="fab fa-github"></i>
+          </a>
+        </section>
 
         <!-- Technical Skills -->
-      <section class="skills" data-aos="fade-up">
-        <h2>Technical Skills</h2>
-        <div class="separator"></div>
-        <ul class="skills-list">
-          <li><img src="https://playwright.dev/img/playwright-logo.svg" alt="Playwright"> Playwright</li>
-          <li><img src="https://avatars.githubusercontent.com/u/8908513?s=200&v=4" alt="Cypress"> Cypress</li>
-          <li><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" alt="TypeScript"> TypeScript</li>
-          <li><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" alt="Java"> Java</li>
-          <li><img src="https://selenium.dev/images/selenium_logo_square_green.png" alt="Selenium"> Selenium</li>
-          <li><img src="https://www.svgrepo.com/show/354202/postman-icon.svg" alt="Postman"> Postman</li>
-          <li><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jenkins/jenkins-original.svg" alt="Jenkins"> Jenkins</li>
-          <li><img src="https://avatars.githubusercontent.com/u/6844498?s=200&v=4" alt="Azure DevOps">Azure DevOps</li>
-          <li><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jira/jira-original.svg" alt="Jira"> Jira</li>
-          <li><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python"> Python</li>
-        </ul>
-      </section>
-      <!-- <div><button class="btn" data-aos="fade-up" id="downloadBtn"><i class="fas fa-download"></i> Download Resume</button></div> -->
-    </aside>
+        <section class="skills">
+          <h2>Technical Skills</h2>
+          <div class="separator"></div>
+          <ul class="skills-list">
+            <li><img src="https://playwright.dev/img/playwright-logo.svg" alt="Playwright"> Playwright</li>
+            <li><img src="https://avatars.githubusercontent.com/u/8908513?s=200&v=4" alt="Cypress"> Cypress</li>
+            <li><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" alt="TypeScript"> TypeScript</li>
+            <li><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" alt="Java"> Java</li>
+            <li><img src="https://selenium.dev/images/selenium_logo_square_green.png" alt="Selenium"> Selenium</li>
+            <li><img src="https://www.svgrepo.com/show/354202/postman-icon.svg" alt="Postman"> Postman</li>
+            <li><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jenkins/jenkins-original.svg" alt="Jenkins"> Jenkins</li>
+            <li><img src="https://avatars.githubusercontent.com/u/6844498?s=200&v=4" alt="Azure DevOps">Azure DevOps</li>
+            <li><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jira/jira-original.svg" alt="Jira"> Jira</li>
+            <li><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python"> Python</li>
+          </ul>
+        </section>
+      </aside>
 
-      <!-- ================= RIGHT ================= -->
+      <!-- ================= RIGHT CONTENT ================= -->
       <section class="right">
         <!-- Profile Summary -->
         <div class="section">
@@ -235,28 +888,29 @@
           <div class="timeline">
             <div class="t-item">
               <div class="t-meta">
-                <span class="year-badge" >May 2022 – Present</span> 
+                <span class="year-badge">May 2022 — Present</span> 
               </div>
-              <div class="t-role">Software Development Engineer in Test  — Musikaar </div>
-              <div  class="t-desc-skills"> Playwright | Cypress | Jenkins | Azure Devops | Python | TeamCity | API & Backend Testing </div>
-              <p class="t-desc">
+              <div class="t-role">Software Development Engineer in Test — Musikaar</div>
+              <div class="t-desc-skills">Playwright | Cypress | Jenkins | Azure DevOps | Python | TeamCity | API & Backend Testing</div>
+              <div class="t-desc">
                 <p> 
-                    Experienced SDET skilled in building robust test automation
-                    frameworks using Playwright and Cypress with TypeScript, Python with custom test framework. Proficient
-                    in CI/CD tools like Azure DevOps, Jenkins, TeamCity with hands-on
-                    experience analyzing auto-triggered pipeline results and validating
-                    release builds.
+                  Experienced SDET skilled in building robust test automation
+                  frameworks using Playwright and Cypress with TypeScript, Python with custom test framework. Proficient
+                  in CI/CD tools like Azure DevOps, Jenkins, TeamCity with hands-on
+                  experience analyzing auto-triggered pipeline results and validating
+                  release builds.
                 </p> 
-                <p> Involved in cross-functional collaboration to understand new features
-                    through manual exploratory testing, determine automation scope, and
-                    develop end-to-end test coverage. Well-versed in test and project
-                    management using JIRA and XRAY. 
+                <p> 
+                  Involved in cross-functional collaboration to understand new features
+                  through manual exploratory testing, determine automation scope, and
+                  develop end-to-end test coverage. Well-versed in test and project
+                  management using JIRA and XRAY. 
                 </p>
                 <p>
-                    Capable of conducting integration testing by validating REST APIs, and
-                    performing backend testing including database validation using Snowflake.
+                  Capable of conducting integration testing by validating REST APIs, and
+                  performing backend testing including database validation using Snowflake.
                 </p>
-              </p>
+              </div>
             </div>
 
             <div class="t-item">
@@ -264,37 +918,43 @@
                 <span class="year-badge">Jul 2020 - May 2022</span>
               </div>
               <div class="t-role">Programmer Analyst - Cognizant</div>
-              <div  class="t-desc-skills"> Java | Selenium | TestNG | API & Backend Testing </div>
-              <p class="t-desc">
-                <p>Experienced SDET with hands-on expertise in Java, Selenium, and
-                TestNG for UI automation and test development. Proficient in backend
-                data validation, including working with Kafka message flows using
-                KafkaTools, and database testing using MySQL and MongoDB for test
-                data management. </p>
-                <p>Collaborate closely with cross-functional teams to understand new
-                features through manual exploratory testing, identify automation
-                opportunities, and implement test coverage accordingly. Skilled in API
-                integration testing using SoapUI, and well-versed in project and test
-                management using JIRA and XRAY.</p>
-              </p>
+              <div class="t-desc-skills">Java | Selenium | TestNG | API & Backend Testing</div>
+              <div class="t-desc">
+                <p>
+                  Experienced SDET with hands-on expertise in Java, Selenium, and
+                  TestNG for UI automation and test development. Proficient in backend
+                  data validation, including working with Kafka message flows using
+                  KafkaTools, and database testing using MySQL and MongoDB for test
+                  data management.
+                </p>
+                <p>
+                  Collaborate closely with cross-functional teams to understand new
+                  features through manual exploratory testing, identify automation
+                  opportunities, and implement test coverage accordingly. Skilled in API
+                  integration testing using SoapUI, and well-versed in project and test
+                  management using JIRA and XRAY.
+                </p>
+              </div>
             </div>
+
             <div class="t-item">
               <div class="t-meta">
                 <span class="year-badge">Jan 2020 - May 2020</span>
               </div>
               <div class="t-role">Intern — Cognizant</div>
-              <p class="t-desc">
-                During the final semester of my Master's program, I completed an
-                internship that introduced me to the core concepts of software testing,
-                including manual testing methodologies and automation testing
-                techniques. This experience laid a strong foundation in quality
-                assurance practices. To further enhance my skills, I completed a
-                certification course on Udemy, demonstrating my commitment to
-                continuous learning and adding a valuable credential to my
-                professional journey.
-              </p>
+              <div class="t-desc">
+                <p>
+                  During the final semester of my Master's program, I completed an
+                  internship that introduced me to the core concepts of software testing,
+                  including manual testing methodologies and automation testing
+                  techniques. This experience laid a strong foundation in quality
+                  assurance practices. To further enhance my skills, I completed a
+                  certification course on Udemy, demonstrating my commitment to
+                  continuous learning and adding a valuable credential to my
+                  professional journey.
+                </p>
+              </div>
             </div>
-
           </div>
         </div>
 
@@ -321,10 +981,13 @@
       </section>
     </section>
   </main>
-   <!-- Load html2pdf.js -->
+
+  <!-- Load html2pdf.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 
   <script>
+    // Uncomment if you add the download button back
+    /*
     document.getElementById("downloadBtn").addEventListener("click", () => {
       const element = document.getElementById("resume");
 
@@ -336,23 +999,21 @@
         jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
       };
 
-      // Create PDF, then open in new tab
       html2pdf().set(opt).from(element)
       .toPdf().get('pdf').then((pdf) => {
         console.log("✅ PDF generated");
         const blob = pdf.output('blob');
         const url = URL.createObjectURL(blob);
 
-        // Try opening in new tab
         window.open(url);
 
-        // Also trigger download
         const a = document.createElement("a");
         a.href = url;
-        a.download = "My_Resume.pdf";
+        a.download = "Niyomi_Rabdu_Resume.pdf";
         a.click();
       });
     });
+    */
   </script>
 </body>
 </html>
