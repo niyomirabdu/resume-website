@@ -16,6 +16,8 @@
       --chip-bg:rgba(240,240,240,0.9);
       --shadow:0 8px 24px rgba(0,0,0,.08);
       --shadow-light:0 4px 12px rgba(0,0,0,.06);
+      --primary-blue: #4a90e2;
+      --dark-blue: #2b4f81;
     }
 
     * {
@@ -65,6 +67,70 @@
       box-shadow:var(--shadow); 
       background:#fff;
       min-height: 100vh;
+    }
+
+    /* ===== DOWNLOAD BUTTON ===== */
+    .download-section {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      display: flex;
+      gap: 10px;
+    }
+
+    .download-btn {
+      background: linear-gradient(135deg, var(--primary-blue) 0%, var(--dark-blue) 100%);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      min-width: 140px;
+      justify-content: center;
+    }
+
+    .download-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+      background: linear-gradient(135deg, #5ba0f2 0%, #3a5f91 100%);
+    }
+
+    .download-btn:active {
+      transform: translateY(0);
+    }
+
+    .download-btn i {
+      font-size: 16px;
+    }
+
+    .loading {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .loading::after {
+      content: '';
+      width: 16px;
+      height: 16px;
+      border: 2px solid #ffffff;
+      border-top: 2px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-left: 8px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
     /* ===== LEFT SIDEBAR ===== */
@@ -314,6 +380,21 @@
       .container {
         margin: 16px 0;
       }
+
+      .download-section {
+        top: 15px;
+        right: 15px;
+      }
+
+      .download-section {
+        gap: 8px;
+      }
+
+      .download-btn {
+        padding: 10px 16px;
+        font-size: 13px;
+        min-width: 110px;
+      }
     }
 
     /* Tablets */
@@ -376,6 +457,14 @@
         grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
         gap: 8px;
       }
+
+      .download-section {
+        position: relative;
+        top: auto;
+        right: auto;
+        margin-bottom: 20px;
+        justify-content: center;
+      }
     }
 
     /* Small tablets */
@@ -425,6 +514,16 @@
 
       .right {
         padding: clamp(20px, 4vw, 32px);
+      }
+
+      .download-section {
+        gap: 6px;
+      }
+
+      .download-btn {
+        padding: 8px 14px;
+        font-size: 12px;
+        min-width: 90px;
       }
     }
 
@@ -572,6 +671,25 @@
         margin: 6px 0;
         font-size: 0.75rem;
       }
+
+      .download-section {
+        margin-bottom: 10px;
+      }
+
+      .download-section {
+        gap: 4px;
+      }
+
+      .download-btn {
+        padding: 6px 12px;
+        font-size: 11px;
+        min-width: 80px;
+        gap: 4px;
+      }
+
+      .download-btn i {
+        font-size: 12px;
+      }
     }
 
     /* Very small devices */
@@ -705,6 +823,21 @@
         margin: 4px 0;
         font-size: 0.7rem;
       }
+
+      .download-section {
+        gap: 3px;
+      }
+
+      .download-btn {
+        padding: 5px 10px;
+        font-size: 10px;
+        min-width: 70px;
+        gap: 3px;
+      }
+
+      .download-btn i {
+        font-size: 10px;
+      }
     }
 
     /* Large screens optimization */
@@ -740,6 +873,10 @@
       
       .section {
         break-inside: avoid;
+      }
+
+      .download-section {
+        display: none !important;
       }
     }
 
@@ -808,13 +945,26 @@
 
     /* Focus styles for keyboard navigation */
     .social a:focus,
-    .btn:focus {
+    .btn:focus,
+    .download-btn:focus {
       outline: 2px solid #4a90e2;
       outline-offset: 2px;
     }
   </style>
 </head>
 <body>
+  <!-- Download Section -->
+  <div class="download-section">
+    <button class="download-btn" id="downloadImage">
+      <i class="fas fa-download"></i>
+      Download Image
+    </button>
+    <button class="download-btn" id="printResume" style="background: linear-gradient(135deg, #28a745 0%, #20693e 100%);">
+      <i class="fas fa-print"></i>
+      Print PDF
+    </button>
+  </div>
+
   <main class="wrap" id="resume">
     <section class="container">
 
@@ -982,38 +1132,250 @@
     </section>
   </main>
 
-  <!-- Load html2pdf.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+  <!-- Load only html2canvas for image generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <script>
-    // Uncomment if you add the download button back
-    /*
-    document.getElementById("downloadBtn").addEventListener("click", () => {
-      const element = document.getElementById("resume");
+    // Download as high-quality image - CORS-free solution
+    async function downloadAsImage() {
+      const button = document.getElementById("downloadImage");
+      const originalContent = button.innerHTML;
+      
+      button.classList.add('loading');
+      button.innerHTML = '<i class="fas fa-spinner"></i> Generating...';
+      
+      const downloadSection = document.querySelector('.download-section');
+      downloadSection.style.display = 'none';
+      
+      try {
+        console.log('Starting image generation...');
+        
+        const element = document.getElementById("resume");
+        
+        // Generate high-quality image with safe settings
+        const canvas = await html2canvas(element, {
+          allowTaint: true,
+          useCORS: false,
+          scale: 3, // Higher quality
+          backgroundColor: '#ffffff',
+          logging: false,
+          width: element.offsetWidth,
+          height: element.offsetHeight,
+          scrollX: 0,
+          scrollY: 0
+        });
+        
+        // Convert to blob and download
+        canvas.toBlob((blob) => {
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.download = 'Niyomi_Rabdu_Resume.png';
+          link.href = url;
+          
+          // Force download
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          
+          // Cleanup
+          URL.revokeObjectURL(url);
+          
+          console.log("✅ Resume downloaded as image successfully");
+          button.innerHTML = '<i class="fas fa-check"></i> Downloaded!';
+          button.classList.remove('loading');
+          
+          setTimeout(() => {
+            button.innerHTML = originalContent;
+          }, 2000);
+          
+        }, 'image/png', 1.0);
+        
+      } catch (error) {
+        console.error("❌ Image generation failed:", error);
+        
+        // Fallback: try with different settings
+        try {
+          const element = document.getElementById("resume");
+          const canvas = await html2canvas(element, {
+            allowTaint: false,
+            useCORS: false,
+            scale: 2,
+            backgroundColor: '#ffffff',
+            logging: true
+          });
+          
+          // Create download link
+          const link = document.createElement('a');
+          link.download = 'Niyomi_Rabdu_Resume.png';
+          link.href = canvas.toDataURL('image/png', 1.0);
+          link.click();
+          
+          button.innerHTML = '<i class="fas fa-check"></i> Downloaded!';
+          button.classList.remove('loading');
+          
+          setTimeout(() => {
+            button.innerHTML = originalContent;
+          }, 2000);
+          
+        } catch (fallbackError) {
+          console.error("❌ Fallback also failed:", fallbackError);
+          button.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Use Print';
+          button.classList.remove('loading');
+          
+          setTimeout(() => {
+            button.innerHTML = originalContent;
+            openPrintDialog();
+          }, 1500);
+        }
+        
+      } finally {
+        downloadSection.style.display = 'flex';
+      }
+    }
 
-      const opt = {
-        margin: 0,
-        filename: 'Niyomi_Rabdu-Resume.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-      };
+    // Enhanced print function for PDF output
+    function openPrintDialog() {
+      const downloadSection = document.querySelector('.download-section');
+      downloadSection.style.display = 'none';
+      
+      // Create comprehensive print styles
+      const printStyle = document.createElement('style');
+      printStyle.id = 'print-styles';
+      printStyle.innerHTML = `
+        @media print {
+          * { 
+            -webkit-print-color-adjust: exact !important; 
+            color-adjust: exact !important; 
+          }
+          
+          body { 
+            background: white !important;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+          }
+          
+          body::before, body::after { display: none !important; }
+          .download-section { display: none !important; }
+          
+          .wrap { 
+            margin: 0 !important; 
+            padding: 0 !important; 
+            max-width: 100% !important; 
+          }
+          
+          .container { 
+            box-shadow: none !important; 
+            border: none !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+            min-height: auto !important;
+            display: flex !important;
+            flex-direction: row !important;
+          }
+          
+          .left {
+            width: 35% !important;
+            background: #e6f0fa !important;
+            -webkit-print-color-adjust: exact !important;
+            color-adjust: exact !important;
+            padding: 20px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+          }
+          
+          .right { 
+            flex: 1 !important;
+            padding: 20px !important;
+            background: white !important;
+          }
+          
+          .profile-pic {
+            width: 120px !important;
+            height: 120px !important;
+            border-radius: 50% !important;
+            background: #c9c9c9 !important;
+            border: 4px solid #fff !important;
+            margin-bottom: 20px !important;
+          }
+          
+          .separator {
+            background: #4a90e2 !important;
+            -webkit-print-color-adjust: exact !important;
+          }
+          
+          .skills-list img {
+            width: 18px !important;
+            height: 18px !important;
+          }
+          
+          .section h2 {
+            color: #2b4f81 !important;
+            border-left: 6px solid #2b4f81 !important;
+            -webkit-print-color-adjust: exact !important;
+          }
+          
+          .year-badge {
+            background: rgba(240,240,240,0.9) !important;
+            border: 1px solid #e6e6e6 !important;
+            -webkit-print-color-adjust: exact !important;
+          }
+          
+          .t-desc-skills {
+            color: #2b4f81 !important;
+            -webkit-print-color-adjust: exact !important;
+          }
+          
+          @page { 
+            margin: 15mm;
+            size: A4;
+          }
+          
+          /* Ensure no page breaks within important sections */
+          .section, .t-item {
+            break-inside: avoid;
+            page-break-inside: avoid;
+          }
+          
+          /* Force colors to print */
+          .left, .separator, .section h2, .t-desc-skills {
+            print-color-adjust: exact !important;
+            -webkit-print-color-adjust: exact !important;
+          }
+        }
+      `;
+      document.head.appendChild(printStyle);
+      
+      // Small delay to ensure styles are applied
+      setTimeout(() => {
+        window.print();
+      }, 100);
+      
+      // Cleanup after print dialog closes
+      setTimeout(() => {
+        downloadSection.style.display = 'flex';
+        const styleElement = document.getElementById('print-styles');
+        if (styleElement) document.head.removeChild(styleElement);
+      }, 1000);
+    }
 
-      html2pdf().set(opt).from(element)
-      .toPdf().get('pdf').then((pdf) => {
-        console.log("✅ PDF generated");
-        const blob = pdf.output('blob');
-        const url = URL.createObjectURL(blob);
+    // Event listeners
+    document.getElementById("downloadImage").addEventListener("click", downloadAsImage);
+    document.getElementById("printResume").addEventListener("click", openPrintDialog);
 
-        window.open(url);
+    // Debug info
+    window.addEventListener('load', () => {
+      console.log('html2canvas loaded:', typeof html2canvas !== 'undefined');
+      console.log('Ready for image download and printing');
+    });
 
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "Niyomi_Rabdu_Resume.pdf";
-        a.click();
+    // Preload images to avoid loading issues
+    window.addEventListener('load', () => {
+      const images = document.querySelectorAll('img');
+      images.forEach(img => {
+        const newImg = new Image();
+        newImg.src = img.src;
       });
     });
-    */
   </script>
 </body>
 </html>
